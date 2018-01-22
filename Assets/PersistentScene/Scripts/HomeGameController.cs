@@ -77,7 +77,7 @@ public class HomeGameController : MonoBehaviour {
         //}
 
 
-        if (availableClues.Count >= gameController.clues.Count)
+        if (gameController.AROver)
         {
             gameController.animator.SetTrigger("ARCompleted");
         }

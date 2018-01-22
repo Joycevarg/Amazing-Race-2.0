@@ -92,4 +92,8 @@ public class CluesController : MonoBehaviour {
     //{
     //    gameController.SendData();
     //}
+    public void LoadScene()
+    {
+        gameController.LoadScene();
+    }
 }

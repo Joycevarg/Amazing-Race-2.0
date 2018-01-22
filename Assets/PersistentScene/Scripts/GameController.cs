@@ -30,7 +30,11 @@ public  class GameController : MonoBehaviour
 
     public GameObject masterButton;
 
+    public bool loading=false;
+
     public int playerNo;
+
+    public bool AROver = false;
 
     #region Game Level Variables
 
@@ -85,6 +89,8 @@ public  class GameController : MonoBehaviour
     //Fader Animator
     public Animator animator;
 
+    int sceneToLoad;
+
     //Persistent Canvas
     public Canvas canvas;
 
@@ -119,7 +125,6 @@ public  class GameController : MonoBehaviour
     }
     private void Start()
     {
-        loadWait = new WaitForSeconds(5f);
         //if (currLevel == -1)
         //{
         //    LoadScene(newUserSceneIndex);
@@ -130,7 +135,6 @@ public  class GameController : MonoBehaviour
         //}
 
         animator = canvas.GetComponent<Animator>();
-        animator.SetTrigger("FadeIn");
         foreach (Clue i in clues)
         {
             i.text=i.text.Replace("\\r\\n", "\n");
@@ -147,8 +151,23 @@ public  class GameController : MonoBehaviour
 
     public void LoadScene(int SceneIndex)
     {
-        animator.SetTrigger("FadeOut");
-        SceneManager.LoadSceneAsync(SceneIndex);
+        if (!loading)
+        {
+            sceneToLoad = SceneIndex;
+            loading = true;
+            animator.SetTrigger("FadeOut");
+        }
+    }
+
+    public void LoadScene()
+    {
+        SceneManager.LoadSceneAsync(sceneToLoad);
+    }
+
+    private void OnLevelWasLoaded(int level)
+    {
+        loading = false;
+        animator.SetTrigger("FadeIn");
     }
 
     #endregion
@@ -157,31 +176,37 @@ public  class GameController : MonoBehaviour
     #region Making A Given Clue Available
     public void MakeClueAvailable()
     {
-        availableClues.Add((availableClues[availableClues.Count - 1] + 1) % clues.Count);
-
-        currentClue = availableClues[availableClues.Count-1];
-        timeDelay[currentClue]=(System.DateTime.Now.Hour-lastClueRecievedTime.Hour)*60*60 + (System.DateTime.Now.Minute-lastClueRecievedTime.Minute)*60 + (System.DateTime.Now.Second - lastClueRecievedTime.Second);
-
-        if (SceneManager.GetActiveScene().buildIndex == 0 && availableClues.Count != 30)
-        {
-            animator.SetTrigger("ClueNewAppear");
-        }
-
-        lastClueRecievedTime = System.DateTime.Now;
-
-        Handheld.Vibrate();
-
-        Save();
-
-        //animator.SetTrigger("ClueAppear");
-        //canvas.GetComponent<CluesController>().PrevClue();
-
-
-        if (availableClues.Count >= gameController.clues.Count)
+        if (availableClues.Count >= gameController.clues.Count && !AROver)
         {
             gameController.animator.SetTrigger("ARCompleted");
+            AROver = true;
         }
-        outString = outString + currentClue.ToString() + '-' + (timeDelay[currentClue] /60).ToString()+ ':' + (timeDelay[currentClue] % 60).ToString() + '/';
+
+        else
+        {
+            availableClues.Add((availableClues[availableClues.Count - 1] + 1) % clues.Count);
+
+            currentClue = availableClues[availableClues.Count - 1];
+            timeDelay[currentClue] = (System.DateTime.Now.Hour - lastClueRecievedTime.Hour) * 60 * 60 + (System.DateTime.Now.Minute - lastClueRecievedTime.Minute) * 60 + (System.DateTime.Now.Second - lastClueRecievedTime.Second);
+
+            if (SceneManager.GetActiveScene().buildIndex == 0 && availableClues.Count != 30)
+            {
+                animator.SetTrigger("ClueNewAppear");
+            }
+
+            lastClueRecievedTime = System.DateTime.Now;
+
+            Handheld.Vibrate();
+
+            Save();
+
+            //animator.SetTrigger("ClueAppear");
+            //canvas.GetComponent<CluesController>().PrevClue();
+
+
+            outString = outString + currentClue.ToString() + '-' + (timeDelay[currentClue] / 60).ToString() + ':' + (timeDelay[currentClue] % 60).ToString() + '/';
+
+        }
 
         //if ((int)availableClues.Count / 5 > gameController.sendNumber && availableClues.Count != 0 && availableClues.Count != 30)
         //{
@@ -214,6 +239,7 @@ public  class GameController : MonoBehaviour
         save.playerNo = playerNo;
         save.pointsScored = pointsScored;
         save.timeDelay = timeDelay;
+        save.AROver = AROver;
         save.lastClueRecievedTime = lastClueRecievedTime;
         save.outString = outString;
         //save.blackoutClue = blackoutClue;
@@ -240,6 +266,7 @@ public  class GameController : MonoBehaviour
             //levelCompleted = loaded.levelCompleted;
             //currLevel = loaded.currLevel;
             playerNo = loaded.playerNo;
+            AROver = loaded.AROver;
             pointsScored = loaded.pointsScored;
             availableClues = loaded.availableClues;
             //blackoutClue = loaded.blackoutClue;
@@ -285,6 +312,7 @@ public  class GameController : MonoBehaviour
     class SaveData
     {
         //public int currLevel;
+        public bool AROver;
         public int playerNo;
         //public int blackoutClue;
         public int pointsScored;

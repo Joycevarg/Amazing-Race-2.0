@@ -7,7 +7,6 @@ public class MasterTrigger : MonoBehaviour
     GameObject button;
     public Canvas canvas;
     GameController gameController;
-    public MeshRenderer mesh;
     public void Start()
     {
         gameController = GameController.gameController;

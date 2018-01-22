@@ -4306,6 +4306,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 224954797541138834, guid: d772e9b37038bd649b42690a704a4400,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.000013287079
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d772e9b37038bd649b42690a704a4400, type: 2}
   m_IsPrefabParent: 0
@@ -4758,10 +4763,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameController: {fileID: 1221799287}
-  fadeAnimator: {fileID: 0}
   input: {fileID: 1407546387}
   submit: {fileID: 1112116571}
-  entryPoints: 10
 --- !u!1001 &1661363962
 Prefab:
   m_ObjectHideFlags: 0
@@ -6010,7 +6013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
